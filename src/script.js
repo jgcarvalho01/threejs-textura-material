@@ -3,8 +3,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import {Pane} from 'tweakpane';
 
-import imageSource from './color.jpg'
-console.log(imageSource)
 
 const pane = new Pane();
 
@@ -35,6 +33,12 @@ const PARAMS = {
     color: '#ff0000',
     spin: () => {
         gsap.to(mesh.rotation, { duration: 1, y: mesh.rotation.y + Math.PI * 2 })
+    },
+    download: () => {
+        const link = document.createElement('a');
+        link.download = 'download.png';
+        link.href = document.getElementById("myCanvas").toDataURL('image/png');
+        link.click()  
     }
   };
   
@@ -48,7 +52,8 @@ const mesh = new THREE.Mesh(
 scene.add(mesh)
 
 const folderMesh = pane.addFolder({
-    title: 'Mesh'
+    title: 'Mesh',
+    expanded: false,
 })
 
 const folderPositionMesh = folderMesh.addFolder({
@@ -127,6 +132,10 @@ folderMesh.addButton({
     title: 'spin'
 }).on("click",PARAMS.spin)
 
+folderMesh.addButton({
+    title: 'download'
+}).on("click",PARAMS.download)
+
 
 // Camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height,0.1,100)
@@ -136,10 +145,11 @@ scene.add(camera)
 
 // Renderer
 const renderer = new THREE.WebGLRenderer({
-    canvas: canvas
+    canvas: canvas,
+    preserveDrawingBuffer: true
+
 })
 renderer.setSize(sizes.width, sizes.height)
-
 // Controls
 const controls = new OrbitControls(camera, canvas)
 
